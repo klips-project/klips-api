@@ -2,13 +2,15 @@ import express from 'express';
 import helmet from 'helmet';
 import amqp from 'amqplib';
 import basicAuth from 'express-basic-auth';
+import Ajv from 'ajv';
+import { logger } from './logger';
+import createJobFromApiInput from './converter';
 import {
   urlencoded,
   json
 } from 'body-parser';
 
-import { logger } from './logger';
-import createJobFromApiInput from './converter';
+const ajv = new Ajv();
 
 const port = process.env.PORT;
 // https://stackoverflow.com/a/57611367
@@ -17,15 +19,33 @@ const rabbitHost = process.env.RABBITHOST;
 const rabbitUser = process.env.RABBITUSER;
 const rabbitPass = process.env.RABBITPASS;
 
+// TODO: move to separate file
 const basicAuthUsers = {
   klips: 'klips'
 };
 
+// TODO: move to separate file
+const schemaInput = {
+  $id: 'json',
+  type: 'object',
+  properties: {
+    'category': { type: 'string' },
+    'source': { type: 'string' },
+    'email': { type: 'string' },
+    'payload': { type: 'object' },
+  },
+  required: [
+    'category',
+    'source',
+    'email',
+    'payload'
+  ],
+  additionalProperties: true
+};
+
 const main = async () => {
 
-  // TODO: basic auth
-
-  // TODO: ensure RabbitMQ is connected
+  // TODO: ensure RabbitMQ is connected and stays connected
   try {
     const connection = await amqp.connect({
       hostname: rabbitHost,
@@ -50,8 +70,10 @@ const main = async () => {
     app.set('trust proxy', 1);
 
     app.use(helmet());
+
+    // ensures the incoming data is a JSON
     app.use(json({
-      limit: '1mb'
+      limit: '1kb'
     }));
     app.use(urlencoded({
       extended: true
@@ -76,17 +98,27 @@ const main = async () => {
 
     app.post('/job',
       async (req: express.Request, res: express.Response) => {
-        // TODO: validate input
-        logger.info(req.body);
-        const job = createJobFromApiInput(req.body);
 
-        channel.sendToQueue(dispatcherQueue, Buffer.from(JSON.stringify(
-          job
-        )), {
-          persistent: true
-        });
+        const validate = ajv.compile(schemaInput);
+        if (validate(req.body)) {
+          logger.info('Input data is in correct structure');
 
-        res.send('post received');
+          const job = createJobFromApiInput(req.body);
+          channel.sendToQueue(dispatcherQueue, Buffer.from(JSON.stringify(
+            job
+          )), {
+            persistent: true
+          });
+          // message to client
+          res.send('Post received');
+        } else {
+          logger.error('Input data not in correct Structure');
+          // log the problems of the incoming JSON
+          logger.error(validate.errors);
+
+          // message to client
+          res.send('Data had errors');
+        }
       });
 
     logger.info(`🍻 Application successfully started on port ${port}`);
