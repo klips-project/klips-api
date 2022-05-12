@@ -38,5 +38,6 @@ Build Docker image for production:
 # build image
 docker build --tag klips-api .
 
+# run image
 docker run -p 3000:3000 klips-api
 ```
