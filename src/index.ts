@@ -103,13 +103,15 @@ const main = async () => {
         if (validate(req.body)) {
           logger.info('Input data is in correct structure');
 
-          const job = createJobFromApiInput(req.body);
-          channel.sendToQueue(dispatcherQueue, Buffer.from(JSON.stringify(
-            job
-          )), {
-            persistent: true
-          });
-          // message to client
+          const job: any = createJobFromApiInput(req.body);
+          if (job) {
+            channel.sendToQueue(dispatcherQueue, Buffer.from(JSON.stringify(
+              job
+            )), {
+              persistent: true
+            });
+            // message to client
+          }
           res.send('Post received');
         } else {
           logger.error('Input data not in correct Structure');
