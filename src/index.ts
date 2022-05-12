@@ -1,6 +1,7 @@
 import express from 'express';
 import helmet from 'helmet';
 import amqp from 'amqplib';
+import basicAuth from 'express-basic-auth';
 import {
   urlencoded,
   json
@@ -15,6 +16,10 @@ const dispatcherQueue: string = process.env.DISPATCHERQUEUE as string;
 const rabbitHost = process.env.RABBITHOST;
 const rabbitUser = process.env.RABBITUSER;
 const rabbitPass = process.env.RABBITPASS;
+
+const basicAuthUsers = {
+  klips: 'klips'
+};
 
 const main = async () => {
 
@@ -50,6 +55,11 @@ const main = async () => {
     }));
     app.use(urlencoded({
       extended: true
+    }));
+
+    app.use(basicAuth({
+      users: basicAuthUsers,
+      realm: 'KLIPS' // name of the area to enter
     }));
 
     app.listen(port);
