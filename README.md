@@ -56,3 +56,14 @@ docker run -p 3000:3000 klips-api
 API starts on port 3000. Current dummy endpoints:
 - `GET /status`
 - `POST /job`
+
+## Access with CLI
+
+```shell
+curl \
+--request POST \
+--header 'Authorization: Basic a2xpcHM6a2xpcHM=' \
+--header 'Content-Type: application/json' \
+--data @example_requests/send-geotiff.json \
+'http://localhost:3000/job'
+```
