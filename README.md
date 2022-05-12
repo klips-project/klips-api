@@ -26,10 +26,17 @@ Use Docker for development:
 
 ```shell
 # build image
-docker build --file Dockerfile.dev --tag klips-api-dev .
+docker build \
+  --file Dockerfile.dev \
+  --tag klips-api-dev \
+  .
 
 # run image with mounted source code
-docker run  -p 3000:3000 -v $(pwd):/usr/app klips-api-dev
+docker run  \
+  -p 3000:3000 \
+  -v $(pwd):/usr/app \
+  --env-file dev.env \
+  klips-api-dev
 ```
 
 Build Docker image for production:
