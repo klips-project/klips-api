@@ -28,11 +28,11 @@ const main = async () => {
     app.listen(port);
 
     app.get(
-      "/status",
+      '/status',
       async (req: express.Request, res: express.Response): Promise<express.Response> => {
-        console.log("status active")
+        logger.info('status active');
         return res.status(200).send({
-          message: "Status: active",
+          message: 'Status: active',
         });
       }
     );
@@ -40,7 +40,7 @@ const main = async () => {
     app.post('/job',
       async (req: express.Request, res: express.Response) => {
         logger.info(req.body);
-        res.send("post received");
+        res.send('post received');
       });
 
     logger.info(`🍻 Application successfully started on port ${port}`);
