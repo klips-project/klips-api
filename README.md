@@ -8,22 +8,18 @@ This repo contains a basic API based on [ExpressJS](http://expressjs.com/) for t
 
 ## Development
 
-`npm run watch`
+with local Node.js:
 
-## Production
+```shell
+PORT=3000 \
+DISPATCHERQUEUE=dispatcher \
+RABBITHOST=localhost \
+RABBITUSER=rabbit \
+RABBITPASS=rabbit \
+npm run watch
+```
 
-`npm run build`
-
-## Usage
-
-API starts on port 3000. Current dummy endpoints:
-- `GET /status`
-- `POST /job`
-
-## Docker
-
-Use Docker for development:
-
+using Node.js inside Docker:
 ```shell
 # build image
 docker build \
@@ -39,7 +35,13 @@ docker run  \
   klips-api-dev
 ```
 
-Build Docker image for production:
+## Production
+
+Create a local build:
+
+`npm run build`
+
+Or build the Docker image:
 
 ```shell
 # build image
@@ -48,3 +50,9 @@ docker build --tag klips-api .
 # run image
 docker run -p 3000:3000 klips-api
 ```
+
+## Usage
+
+API starts on port 3000. Current dummy endpoints:
+- `GET /status`
+- `POST /job`
