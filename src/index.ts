@@ -1,17 +1,44 @@
 import express from 'express';
 import helmet from 'helmet';
+import amqp from 'amqplib';
 import {
   urlencoded,
   json
 } from 'body-parser';
 
 import { logger } from './logger';
+import createJobFromApiInput from './converter';
 
-const port = 3000;
+const port = process.env.PORT;
+// https://stackoverflow.com/a/57611367
+const dispatcherQueue: string = process.env.DISPATCHERQUEUE as string;
+const rabbitHost = process.env.RABBITHOST;
+const rabbitUser = process.env.RABBITUSER;
+const rabbitPass = process.env.RABBITPASS;
 
 const main = async () => {
 
+  // TODO: basic auth
+
+  // TODO: ensure RabbitMQ is connected
   try {
+    const connection = await amqp.connect({
+      hostname: rabbitHost,
+      username: rabbitUser,
+      password: rabbitPass,
+      heartbeat: 60
+    });
+    const channel = await connection.createChannel();
+
+    channel.assertQueue('DeadLetterQueue', { durable: true });
+    channel.bindQueue('DeadLetterQueue', 'DeadLetterExchange', '');
+    channel.assertQueue(dispatcherQueue, {
+      durable: true,
+      arguments: {
+        'x-dead-letter-exchange': 'DeadLetterExchange'
+      }
+    });
+
     const app = express();
 
     // See https://expressjs.com/en/guide/behind-proxies.html
@@ -39,7 +66,16 @@ const main = async () => {
 
     app.post('/job',
       async (req: express.Request, res: express.Response) => {
+        // TODO: validate input
         logger.info(req.body);
+        const job = createJobFromApiInput(req.body);
+
+        channel.sendToQueue(dispatcherQueue, Buffer.from(JSON.stringify(
+          job
+        )), {
+          persistent: true
+        });
+
         res.send('post received');
       });
 
