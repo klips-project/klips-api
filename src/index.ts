@@ -12,6 +12,9 @@ import {
 } from 'body-parser';
 
 const port = process.env.PORT;
+
+const useRabbitMQ = process.env.USE_RABBIT_MQ || false;
+
 // https://stackoverflow.com/a/57611367
 const dispatcherQueue: string = process.env.DISPATCHERQUEUE as string;
 const rabbitHost = process.env.RABBITHOST;
@@ -83,22 +86,26 @@ const main = async () => {
 
   // TODO: ensure RabbitMQ is connected and stays connected
   try {
-    const connection = await amqp.connect({
-      hostname: rabbitHost,
-      username: rabbitUser,
-      password: rabbitPass,
-      heartbeat: 60
-    });
-    const channel = await connection.createChannel();
 
-    channel.assertQueue('DeadLetterQueue', { durable: true });
-    channel.bindQueue('DeadLetterQueue', 'DeadLetterExchange', '');
-    channel.assertQueue(dispatcherQueue, {
-      durable: true,
-      arguments: {
-        'x-dead-letter-exchange': 'DeadLetterExchange'
-      }
-    });
+    let channel: any;
+    if (useRabbitMQ) {
+      const connection = await amqp.connect({
+        hostname: rabbitHost,
+        username: rabbitUser,
+        password: rabbitPass,
+        heartbeat: 60
+      });
+      channel = await connection.createChannel();
+
+      channel.assertQueue('DeadLetterQueue', { durable: true });
+      channel.bindQueue('DeadLetterQueue', 'DeadLetterExchange', '');
+      channel.assertQueue(dispatcherQueue, {
+        durable: true,
+        arguments: {
+          'x-dead-letter-exchange': 'DeadLetterExchange'
+        }
+      });
+    }
 
     const app = express();
 
@@ -141,23 +148,26 @@ const main = async () => {
         if (validate(req.body)) {
           logger.info('Input data is in correct structure');
 
-          const job: any = createJobFromApiInput(req.body);
-          if (job) {
-            channel.sendToQueue(dispatcherQueue, Buffer.from(JSON.stringify(
-              job
-            )), {
-              persistent: true
-            });
-            // message to client
+          if (useRabbitMQ) {
+            const job: any = createJobFromApiInput(req.body);
+            if (job) {
+              channel.sendToQueue(dispatcherQueue, Buffer.from(JSON.stringify(
+                job
+              )), {
+                persistent: true
+              });
+            }
           }
-          res.send('Post received');
+
+          res.send('Submitted JSON has correct structure');
         } else {
           logger.error('Input data not in correct Structure');
           // log the problems of the incoming JSON
           logger.error(validate.errors);
+          const errorReport = JSON.stringify(validate.errors, null, 2);
 
           // message to client
-          res.send('Data had errors');
+          res.send(`Submitted JSON is malformed. Errors:\n ${errorReport}`);
         }
       });
 
