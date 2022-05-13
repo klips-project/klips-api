@@ -31,9 +31,17 @@ docker build \
 docker run  \
   -p 3000:3000 \
   -v $(pwd):/usr/app \
+  -v $(pwd)/src/config:/klips-conf \
   --env-file dev.env \
   klips-api-dev
 ```
+
+## Config files
+
+The API has two config files:
+
+- `basic-auth-users.json`: the credentials for basic authentication
+- `schema-geotiff-upload.json`: the JSON schema for validating the API input
 
 ## Production
 
@@ -48,7 +56,11 @@ Or build the Docker image:
 docker build --tag klips-api .
 
 # run image
-docker run -p 3000:3000 klips-api
+docker run \
+  -p 3000:3000 \
+  -v /path/to/your/config/files:/klips-conf \
+  --env-file production.env \
+  klips-api
 ```
 
 ## Usage

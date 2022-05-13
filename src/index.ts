@@ -3,6 +3,8 @@ import helmet from 'helmet';
 import amqp from 'amqplib';
 import basicAuth from 'express-basic-auth';
 import Ajv from 'ajv';
+import fs from 'fs';
+import path from 'path';
 
 import { logger } from './logger';
 import createJobFromApiInput from './converter';
@@ -11,76 +13,28 @@ import {
   json
 } from 'body-parser';
 
-const port = process.env.PORT;
+const port: any = process.env.PORT;
+if (!port || isNaN(port)){
+  logger.error('No port provided');
+  process.exit(1);
+}
 
 const useRabbitMQ = process.env.USE_RABBIT_MQ || false;
-
-// https://stackoverflow.com/a/57611367
 const dispatcherQueue: string = process.env.DISPATCHERQUEUE as string;
 const rabbitHost = process.env.RABBITHOST;
 const rabbitUser = process.env.RABBITUSER;
 const rabbitPass = process.env.RABBITPASS;
 
-// TODO: move to separate file
-const basicAuthUsers = {
-  klips: 'klips'
-};
+const configDir = process.env.CONFIG_DIR || '/klips-conf';
 
-// TODO: move to separate file
-// TODO: consider using "ajv-formats" to also check for types like "email"
-// TODO: consider to also make sanity checks of the values
-//       maybe using https://github.com/validatorjs/validator.js
-const schemaInput = {
-  $id: 'json',
-  type: 'object',
-  properties: {
-    category: { type: 'string' },
-    source: { type: 'string' },
-    email: { type: 'string' },
-    payload: {
-      type: 'object',
-      'properties': {
-        'url': {
-          'type': 'string'
-        },
-        'creationTime': {
-          'type': 'integer'
-        },
-        'predictionStartTime': {
-          'type': 'integer'
-        },
-        'predictionEndTime': {
-          'type': 'integer'
-        },
-        'interval': {
-          'type': 'integer'
-        },
-        'region': {
-          'type': 'integer'
-        },
-        'type': {
-          'type': 'integer'
-        }
-      },
-      'required': [
-        'url',
-        'creationTime',
-        'predictionStartTime',
-        'predictionEndTime',
-        'interval',
-        'region',
-        'type'
-      ]
-    },
-  },
-  required: [
-    'category',
-    'source',
-    'email',
-    'payload'
-  ],
-  additionalProperties: true
-};
+const basicAuthUsersPath = path.join(configDir, 'basic-auth-users.json');
+const jsonSchemaGeoTiffPath = path.join(configDir, 'schema-geotiff-upload.json');
+
+const rawdataUsers = fs.readFileSync(basicAuthUsersPath) as unknown as string;
+const basicAuthUsers = JSON.parse(rawdataUsers);
+
+const rawdataSchema = fs.readFileSync(jsonSchemaGeoTiffPath) as unknown as string;
+const schemaInput = JSON.parse(rawdataSchema);
 
 const main = async () => {
 
@@ -142,6 +96,9 @@ const main = async () => {
     app.post('/job',
       async (req: express.Request, res: express.Response) => {
 
+        // TODO: consider using "ajv-formats" to also check for types like "email"
+        // TODO: consider to also make sanity checks of the values
+        //       maybe using https://github.com/validatorjs/validator.js
         const ajv = new Ajv();
         const validate = ajv.compile(schemaInput);
 
