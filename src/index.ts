@@ -3,6 +3,7 @@ import helmet from 'helmet';
 import amqp from 'amqplib';
 import basicAuth from 'express-basic-auth';
 import Ajv from 'ajv';
+
 import { logger } from './logger';
 import createJobFromApiInput from './converter';
 import {
@@ -10,7 +11,7 @@ import {
   json
 } from 'body-parser';
 
-const ajv = new Ajv();
+
 
 const port = process.env.PORT;
 // https://stackoverflow.com/a/57611367
@@ -25,14 +26,49 @@ const basicAuthUsers = {
 };
 
 // TODO: move to separate file
+// TODO: consider using "ajv-formats" to also check for types like "email"
 const schemaInput = {
   $id: 'json',
   type: 'object',
   properties: {
-    'category': { type: 'string' },
-    'source': { type: 'string' },
-    'email': { type: 'string' },
-    'payload': { type: 'object' },
+    category: { type: 'string' },
+    source: { type: 'string' },
+    email: { type: 'string' },
+    payload: {
+      type: 'object',
+      'properties': {
+        'url': {
+          'type': 'string'
+        },
+        'creationTime': {
+          'type': 'integer'
+        },
+        'predictionStartTime': {
+          'type': 'integer'
+        },
+        'predictionEndTime': {
+          'type': 'integer'
+        },
+        'interval': {
+          'type': 'integer'
+        },
+        'region': {
+          'type': 'integer'
+        },
+        'type': {
+          'type': 'integer'
+        }
+      },
+      'required': [
+        'url',
+        'creationTime',
+        'predictionStartTime',
+        'predictionEndTime',
+        'interval',
+        'region',
+        'type'
+      ]
+    },
   },
   required: [
     'category',
@@ -99,7 +135,11 @@ const main = async () => {
     app.post('/job',
       async (req: express.Request, res: express.Response) => {
 
+        const ajv = new Ajv();
         const validate = ajv.compile(schemaInput);
+
+        // TODO: consider to also make sanity checks of the values
+        //       maybe using https://github.com/validatorjs/validator.js
         if (validate(req.body)) {
           logger.info('Input data is in correct structure');
 
