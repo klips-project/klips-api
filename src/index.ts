@@ -11,8 +11,6 @@ import {
   json
 } from 'body-parser';
 
-
-
 const port = process.env.PORT;
 // https://stackoverflow.com/a/57611367
 const dispatcherQueue: string = process.env.DISPATCHERQUEUE as string;
@@ -27,6 +25,8 @@ const basicAuthUsers = {
 
 // TODO: move to separate file
 // TODO: consider using "ajv-formats" to also check for types like "email"
+// TODO: consider to also make sanity checks of the values
+//       maybe using https://github.com/validatorjs/validator.js
 const schemaInput = {
   $id: 'json',
   type: 'object',
@@ -138,8 +138,6 @@ const main = async () => {
         const ajv = new Ajv();
         const validate = ajv.compile(schemaInput);
 
-        // TODO: consider to also make sanity checks of the values
-        //       maybe using https://github.com/validatorjs/validator.js
         if (validate(req.body)) {
           logger.info('Input data is in correct structure');
 
