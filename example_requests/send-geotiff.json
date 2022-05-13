@@ -1,0 +1,14 @@
+{
+    "category": "forecast",
+    "source": "hhi",
+    "email": "info@example.de",
+    "payload": {
+        "url": "https://www.example.com/dummy.tiff",
+        "creationTime": 12345657687,
+        "predictionStartTime": 12345657687,
+        "predictionEndTime": 12345659687,
+        "interval": 3600,
+        "region": 0 ,
+        "type": 0
+    }
+}
