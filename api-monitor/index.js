@@ -50,10 +50,12 @@ var requestOptions = {
 
 const url = `${apiUrl}/status`;
 fetch(url, requestOptions)
-  .then(response => response.json())
+  .then(response => {
+    return response.json();
+  })
   .then(result => {
     if (result.message === 'Status: active') {
-      console.log('OKAY');
+      console.log('SUCCESS: Connection to API is okay.');
     } else {
       sendMattermostAlert(errorText);
     }
