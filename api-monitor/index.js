@@ -10,7 +10,7 @@ const errorText = process.env.ALERT_TEXT_TEMPLATE;
 /**
  * Sends text to the mattermost chat.
  *
- * @param {String} text The thext to send to the mattermost chat
+ * @param {String} text The text to send to the mattermost chat
  */
  async function sendMattermostAlert(text) {
 
