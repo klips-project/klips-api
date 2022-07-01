@@ -60,6 +60,15 @@ docker run \
 ## Environment variables
 
 - `USE_RABBIT_MQ` - if API shall forward messages to RabbitMQ. Allowed values: `0`, `1`. Default is `0`
+- `PORT` -  The Port on which to publish this API
+- `DISPATCHERQUEUE` - the name of the dispatcher queue
+- `RABBITHOST` - the host of the RabbitMQ instance
+- `RABBITUSER` - the username for the RabbitMQ instance
+- `RABBITPASS` - the password for the RabbitMQ instance
+- `CONFIG_DIR` - the path to the directory with the configuration files
+- `PARTNER_URL_START` - the start string of the partner's API URL, e.g. "https://www.example.com/api"
+- `PARTNER_API_USERNAME` - the username of the partner's API
+- `PARTNER_API_PASSWORD` - the password of the partner's API
 
 ## Config files
 

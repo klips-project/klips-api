@@ -3,7 +3,7 @@
     "source": "hhi",
     "email": "info@example.de",
     "payload": {
-        "url": "https://www.example.com/dummy.tiff",
+        "url": "http://nginx/sample.tif",
         "creationTime": 12345657687,
         "predictionStartTime": 12345657687,
         "predictionEndTime": 12345659687,

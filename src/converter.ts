@@ -11,6 +11,18 @@ const createGeoTiffPublicationJob = (requestBody: any) => {
   const dataStore = layerName;
   const layerTitle = layerName;
   const email = requestBody.email;
+  const geoTiffFilePath = `/opt/geoserver_data/${layerName}.tif`;
+
+  let username;
+  let password;
+  // set username and password if necessary
+
+  const partnerUrlStart = process.env.PARTNER_URL_START;
+  if (geotiffUrl.startsWith(partnerUrlStart)){
+    console.log('URL from partner is used');
+    username = process.env.PARTNER_API_USERNAME;
+    password = process.env.PARTNER_API_PASSWORD;
+  }
 
   return {
     job: [
@@ -19,7 +31,9 @@ const createGeoTiffPublicationJob = (requestBody: any) => {
         type: 'download-file',
         inputs: [
           geotiffUrl,
-          '/home/data'
+          geoTiffFilePath,
+          username,
+          password
         ]
       },
       {
