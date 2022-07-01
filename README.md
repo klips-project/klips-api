@@ -57,6 +57,10 @@ docker run \
     ghcr.io/klips-project/klips-api:latest
 ```
 
+## Environment variables
+
+- `USE_RABBIT_MQ` - if API shall forward messages to RabbitMQ. Allowed values: `0`, `1`. Default is `0`
+
 ## Config files
 
 The API has two config files:
