@@ -5,47 +5,49 @@
  */
 const createGeoTiffPublicationJob = (requestBody: any) => {
 
-  const geotiffUrl = requestBody.url;
+  const geotiffUrl = requestBody.payload.url;
   const geoServerWorkspace = 'klips';
-  const dataStore = 'forecasts';
-  const layerName = `${requestBody.region}_${requestBody.predictionStartTime}`;
+  const layerName = `${requestBody.payload.region}_${requestBody.payload.predictionStartTime}`;
+  const dataStore = layerName;
   const layerTitle = layerName;
+  const email = requestBody.email;
 
   return {
-    'job': [
+    job: [
       {
-        'id': 1,
-        'type': 'download-new-data-from-url',
-        'inputs': [
+        id: 1,
+        type: 'download-file',
+        inputs: [
           geotiffUrl,
           '/home/data'
         ]
       },
       {
-        'id': 2,
-        'type': 'geotiff-validator',
-        'inputs': [
+        id: 2,
+        type: 'geotiff-validator',
+        inputs: [
           {
-            'outputOfId': 1,
-            'outputIndex': 0
+            outputOfId: 1,
+            outputIndex: 0
           }
         ]
       },
       {
-        'id': 3,
-        'type': 'geoserver-publish-geotiff',
-        'inputs': [
+        id: 3,
+        type: 'geoserver-publish-geotiff',
+        inputs: [
           geoServerWorkspace,
           dataStore,
           layerName,
           layerTitle,
           {
-            'outputOfId': 2,
-            'outputIndex': 0
+            outputOfId: 2,
+            outputIndex: 0
           }
         ]
       }
-    ]
+    ],
+    email: email
   };
 };
 
@@ -57,9 +59,7 @@ const createGeoTiffPublicationJob = (requestBody: any) => {
  */
 const createJobFromApiInput = (requestBody: any) => {
 
-  if (requestBody.category === 'forecast') {
-    return createGeoTiffPublicationJob(requestBody);
-  }
+  return createGeoTiffPublicationJob(requestBody);
 
 };
 
