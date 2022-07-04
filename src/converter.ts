@@ -1,3 +1,5 @@
+import { logger } from './logger';
+
 /**
  * Convert incoming message from API to an internal job for RabbitMQ.
  * @param requestBody {Object} The JSON coming from the API
@@ -7,19 +9,23 @@ const createGeoTiffPublicationJob = (requestBody: any) => {
 
   const geotiffUrl = requestBody.payload.url;
   const geoServerWorkspace = 'klips';
+  // TODO: convert UNIX time to ISO Timestring
   const layerName = `${requestBody.payload.region}_${requestBody.payload.predictionStartTime}`;
-  const dataStore = layerName;
-  const layerTitle = layerName;
   const email = requestBody.email;
-  const geoTiffFilePath = `/opt/geoserver_data/${layerName}.tif`;
+
+  // NOTE: the mosaic store must be called exactly as its main directory
+  // TODO: the name should be set dynamically in future
+  const mosaicStoreName = 'demo-mosaic';
+
+  const geoTiffFilePath = `/opt/geoserver_data/${mosaicStoreName}/${layerName}.tif`;
 
   let username;
   let password;
-  // set username and password if necessary
 
+  // set username and password if necessary
   const partnerUrlStart = process.env.PARTNER_URL_START;
-  if (geotiffUrl.startsWith(partnerUrlStart)){
-    console.log('URL from partner is used');
+  if (geotiffUrl.startsWith(partnerUrlStart)) {
+    logger.info('URL from partner is used');
     username = process.env.PARTNER_API_USERNAME;
     password = process.env.PARTNER_API_PASSWORD;
   }
@@ -48,12 +54,10 @@ const createGeoTiffPublicationJob = (requestBody: any) => {
       },
       {
         id: 3,
-        type: 'geoserver-publish-geotiff',
+        type: 'geoserver-publish-imagemosaic',
         inputs: [
           geoServerWorkspace,
-          dataStore,
-          layerName,
-          layerTitle,
+          mosaicStoreName,
           {
             outputOfId: 2,
             outputIndex: 0
