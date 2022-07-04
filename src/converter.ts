@@ -1,3 +1,5 @@
+import { logger } from './logger';
+
 /**
  * Convert incoming message from API to an internal job for RabbitMQ.
  * @param requestBody {Object} The JSON coming from the API
@@ -5,47 +7,65 @@
  */
 const createGeoTiffPublicationJob = (requestBody: any) => {
 
-  const geotiffUrl = requestBody.url;
+  const geotiffUrl = requestBody.payload.url;
   const geoServerWorkspace = 'klips';
-  const dataStore = 'forecasts';
-  const layerName = `${requestBody.region}_${requestBody.predictionStartTime}`;
-  const layerTitle = layerName;
+  // TODO: convert UNIX time to ISO Timestring
+  const layerName = `${requestBody.payload.region}_${requestBody.payload.predictionStartTime}`;
+  const email = requestBody.email;
+
+  // NOTE: the mosaic store must be called exactly as its main directory
+  // TODO: the name should be set dynamically in future
+  const mosaicStoreName = 'demo-mosaic';
+
+  const geoTiffFilePath = `/opt/geoserver_data/${mosaicStoreName}/${layerName}.tif`;
+
+  let username;
+  let password;
+
+  // set username and password if necessary
+  const partnerUrlStart = process.env.PARTNER_URL_START;
+  if (geotiffUrl.startsWith(partnerUrlStart)) {
+    logger.info('URL from partner is used');
+    username = process.env.PARTNER_API_USERNAME;
+    password = process.env.PARTNER_API_PASSWORD;
+  }
 
   return {
-    'job': [
+    job: [
       {
-        'id': 1,
-        'type': 'download-new-data-from-url',
-        'inputs': [
+        id: 1,
+        type: 'download-file',
+        inputs: [
           geotiffUrl,
-          '/home/data'
+          geoTiffFilePath,
+          username,
+          password
         ]
       },
       {
-        'id': 2,
-        'type': 'geotiff-validator',
-        'inputs': [
+        id: 2,
+        type: 'geotiff-validator',
+        inputs: [
           {
-            'outputOfId': 1,
-            'outputIndex': 0
+            outputOfId: 1,
+            outputIndex: 0
           }
         ]
       },
       {
-        'id': 3,
-        'type': 'geoserver-publish-geotiff',
-        'inputs': [
+        id: 3,
+        type: 'geoserver-publish-imagemosaic',
+        inputs: [
           geoServerWorkspace,
-          dataStore,
-          layerName,
-          layerTitle,
+          mosaicStoreName,
           {
-            'outputOfId': 2,
-            'outputIndex': 0
+            outputOfId: 2,
+            outputIndex: 0
           }
         ]
       }
-    ]
+    ],
+    email: email
   };
 };
 
@@ -57,9 +77,7 @@ const createGeoTiffPublicationJob = (requestBody: any) => {
  */
 const createJobFromApiInput = (requestBody: any) => {
 
-  if (requestBody.category === 'forecast') {
-    return createGeoTiffPublicationJob(requestBody);
-  }
+  return createGeoTiffPublicationJob(requestBody);
 
 };
 

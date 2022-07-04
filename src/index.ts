@@ -19,7 +19,7 @@ if (!port || isNaN(port)){
   process.exit(1);
 }
 
-const useRabbitMQ = process.env.USE_RABBIT_MQ || false;
+const useRabbitMQ = process.env.USE_RABBIT_MQ === '1';
 const dispatcherQueue: string = process.env.DISPATCHERQUEUE as string;
 const rabbitHost = process.env.RABBITHOST;
 const rabbitUser = process.env.RABBITUSER;
