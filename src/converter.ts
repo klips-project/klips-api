@@ -1,4 +1,10 @@
 import { logger } from './logger';
+import dayjs from 'dayjs';
+
+// TODO: maybe move to config file
+const timeStampFormat = 'YYYYMMDDTHHmm';
+const minTimeStamp = '2021';
+const maxTimeStamp = '2024';
 
 /**
  * Convert incoming message from API to an internal job for RabbitMQ.
@@ -9,8 +15,21 @@ const createGeoTiffPublicationJob = (requestBody: any) => {
 
   const geotiffUrl = requestBody.payload.url;
   const geoServerWorkspace = 'klips';
-  // TODO: convert UNIX time to ISO Timestring
-  const layerName = `${requestBody.payload.region}_${requestBody.payload.predictionStartTime}`;
+
+  const parsedTimeStamp = dayjs(requestBody.payload.predictionStartTime);
+  if (!parsedTimeStamp.isValid()) {
+    throw 'TimeStamp not valid';
+  }
+
+  const inCorrectTimeRange = parsedTimeStamp.isAfter(minTimeStamp) && parsedTimeStamp.isBefore(maxTimeStamp);
+
+  if (!inCorrectTimeRange){
+    throw 'Time outside of timerange';
+  }
+
+  const timestamp = parsedTimeStamp.format(timeStampFormat);
+
+  const layerName = `${requestBody.payload.region}_${timestamp}`;
   const email = requestBody.email;
 
   // NOTE: the mosaic store must be called exactly as its main directory
