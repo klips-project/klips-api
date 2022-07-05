@@ -7,6 +7,11 @@ const maxTimeStamp = '2024';
 // for details see https://day.js.org/docs/en/display/format
 const timeStampFormat = 'YYYYMMDDTHHmm';
 
+// NOTE: the mosaic store must be called exactly as its main directory
+// TODO: the name should be set dynamically in future
+const mosaicStoreName = 'demo-mosaic';
+const geoServerWorkspace = 'klips';
+
 /**
  * Convert incoming message from API to an internal job for RabbitMQ.
  * @param requestBody {Object} The JSON coming from the API
@@ -15,7 +20,6 @@ const timeStampFormat = 'YYYYMMDDTHHmm';
 const createGeoTiffPublicationJob = (requestBody: any) => {
 
   const geotiffUrl = requestBody.payload.url;
-  const geoServerWorkspace = 'klips';
 
   const parsedTimeStamp = dayjs(requestBody.payload.predictionStartTime);
   if (!parsedTimeStamp.isValid()) {
@@ -23,26 +27,20 @@ const createGeoTiffPublicationJob = (requestBody: any) => {
   }
 
   const inCorrectTimeRange = parsedTimeStamp.isAfter(minTimeStamp) && parsedTimeStamp.isBefore(maxTimeStamp);
-
   if (!inCorrectTimeRange){
     throw 'Time outside of timerange';
   }
 
   const timestamp = parsedTimeStamp.format(timeStampFormat);
 
-  const layerName = `${requestBody.payload.region}_${timestamp}`;
+  const filename = `${requestBody.payload.region}_${timestamp}`;
+  const geoTiffFilePath = `/opt/geoserver_data/${mosaicStoreName}/${filename}.tif`;
+
   const email = requestBody.email;
 
-  // NOTE: the mosaic store must be called exactly as its main directory
-  // TODO: the name should be set dynamically in future
-  const mosaicStoreName = 'demo-mosaic';
-
-  const geoTiffFilePath = `/opt/geoserver_data/${mosaicStoreName}/${layerName}.tif`;
-
+  // set username and password if necessary
   let username;
   let password;
-
-  // set username and password if necessary
   const partnerUrlStart = process.env.PARTNER_URL_START;
   if (geotiffUrl.startsWith(partnerUrlStart)) {
     logger.info('URL from partner is used');
