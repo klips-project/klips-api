@@ -1,6 +1,6 @@
 # KLIPS API
 
-This repo contains a basic API based on [ExpressJS](http://expressjs.com/) for the KLIPS project.
+This repo contains the API  for the KLIPS project.
 
 ## Development
 
@@ -16,6 +16,11 @@ DISPATCHERQUEUE=dispatcher \
 RABBITHOST=localhost \
 RABBITUSER=rabbit \
 RABBITPASS=rabbit \
+USE_RABBIT_MQ=1 \
+CONFIG_DIR=src/config \
+PARTNER_URL_START=http://www.example.com \
+PARTNER_API_USERNAME=myusername \
+PARTNER_API_PASSWORD=randompassword \
 npm run watch
 
 # create a local build

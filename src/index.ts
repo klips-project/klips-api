@@ -101,12 +101,18 @@ const main = async () => {
         //       maybe using https://github.com/validatorjs/validator.js
         const ajv = new Ajv();
         const validate = ajv.compile(schemaInput);
+        // ensure a job can be created from the incoming JSON
+        let job: any;
+        try {
+          job = createJobFromApiInput(req.body);
+        } catch (error) {
+          logger.error(error);
+        }
 
-        if (validate(req.body)) {
+        if (validate(req.body) && job) {
           logger.info('Input data is in correct structure');
 
           if (useRabbitMQ) {
-            const job: any = createJobFromApiInput(req.body);
             if (job) {
               channel.sendToQueue(dispatcherQueue, Buffer.from(JSON.stringify(
                 job
@@ -115,8 +121,11 @@ const main = async () => {
               });
             }
           }
-
           res.send('Submitted JSON has correct structure');
+        } else if (validate(req.body) && !job) {
+          const infoText = 'Submitted JSON has correct structure, but it contains invalid values.';
+          logger.info(infoText);
+          res.send(infoText);
         } else {
           logger.error('Input data not in correct Structure');
           // log the problems of the incoming JSON
