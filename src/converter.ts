@@ -2,9 +2,10 @@ import { logger } from './logger';
 import dayjs from 'dayjs';
 
 // TODO: maybe move to config file
-const timeStampFormat = 'YYYYMMDDTHHmm';
 const minTimeStamp = '2021';
 const maxTimeStamp = '2024';
+// for details see https://day.js.org/docs/en/display/format
+const timeStampFormat = 'YYYYMMDDTHHmm';
 
 /**
  * Convert incoming message from API to an internal job for RabbitMQ.
