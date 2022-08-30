@@ -21,7 +21,7 @@ const createGeoTiffPublicationJob = (requestBody: any) => {
 
   const geotiffUrl = requestBody.payload.url;
 
-  const parsedTimeStamp = dayjs(requestBody.payload.predictionStartTime);
+  const parsedTimeStamp = dayjs.unix(requestBody.payload.predictionStartTime);
   if (!parsedTimeStamp.isValid()) {
     throw 'TimeStamp not valid';
   }
