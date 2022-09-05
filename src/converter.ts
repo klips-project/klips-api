@@ -8,10 +8,13 @@ const maxTimeStamp = '2024';
 // for details see https://day.js.org/docs/en/display/format
 const timeStampFormat = 'YYYYMMDDTHHmm';
 
-// NOTE: the mosaic store must be called exactly as its main directory
-// TODO: the name should be set dynamically in future
-const mosaicStoreName = 'demo-mosaic';
-const geoServerWorkspace = 'klips';
+
+const mosaicStoreName = 'temperature';
+
+const regionsMapping: any = {
+  0: 'DRESDEN',
+  1: 'LANGENFELD'
+};
 
 /**
  * Convert incoming message from API to an internal job for RabbitMQ.
@@ -19,6 +22,14 @@ const geoServerWorkspace = 'klips';
  * @returns {Object} The job for the dispatcher
  */
 const createGeoTiffPublicationJob = (requestBody: any) => {
+
+  const regionCode: number = requestBody.payload.region;
+
+  const regionName: string = regionsMapping[regionCode];
+  if (!regionName){
+    throw 'Provided region code is not known.';
+  }
+  const geoServerWorkspace = regionName;
 
   const geotiffUrl = requestBody.payload.url;
 
