@@ -8,12 +8,9 @@ const maxTimeStamp = '2024';
 // for details see https://day.js.org/docs/en/display/format
 const timeStampFormat = 'YYYYMMDDTHHmm';
 
-
-const mosaicStoreName = 'temperature';
-
 const regionsMapping: any = {
-  0: 'DRESDEN',
-  1: 'LANGENFELD'
+  0: 'dresden',
+  1: 'langenfeld'
 };
 
 /**
@@ -26,10 +23,12 @@ const createGeoTiffPublicationJob = (requestBody: any) => {
   const regionCode: number = requestBody.payload.region;
 
   const regionName: string = regionsMapping[regionCode];
-  if (!regionName){
+  if (!regionName) {
     throw 'Provided region code is not known.';
   }
   const geoServerWorkspace = regionName;
+  // NOTE: the store name must be unique, even between multiple workspaces
+  const mosaicStoreName = `${regionName}_temperature`;
 
   const geotiffUrl = requestBody.payload.url;
 
@@ -39,7 +38,7 @@ const createGeoTiffPublicationJob = (requestBody: any) => {
   }
 
   const inCorrectTimeRange = parsedTimeStamp.isAfter(minTimeStamp) && parsedTimeStamp.isBefore(maxTimeStamp);
-  if (!inCorrectTimeRange){
+  if (!inCorrectTimeRange) {
     throw 'Time outside of timerange';
   }
 
@@ -84,6 +83,14 @@ const createGeoTiffPublicationJob = (requestBody: any) => {
       },
       {
         id: 3,
+        type: 'geoserver-create-imagemosaic-datastore',
+        inputs: [
+          geoServerWorkspace,
+          mosaicStoreName
+        ]
+      },
+      {
+        id: 4,
         type: 'geoserver-publish-imagemosaic',
         inputs: [
           geoServerWorkspace,
