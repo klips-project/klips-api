@@ -1,5 +1,6 @@
 import { logger } from './logger';
 import dayjs from 'dayjs';
+import path from 'path';
 
 // TODO: maybe move to config file
 const minTimeStamp = '2021';
@@ -34,7 +35,7 @@ const createGeoTiffPublicationJob = (requestBody: any) => {
   const timestamp = parsedTimeStamp.format(timeStampFormat);
 
   const filename = `${requestBody.payload.region}_${timestamp}`;
-  const geoTiffFilePath = `/opt/geoserver_data/${mosaicStoreName}/${filename}.tif`;
+  const geoTiffFilePath = path.join('/opt', 'geoserver_data', 'temp', 'klips_geotiff_files', `${filename}.tif`);
 
   const email = requestBody.email;
 
