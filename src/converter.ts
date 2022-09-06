@@ -1,5 +1,6 @@
 import { logger } from './logger';
 import dayjs from 'dayjs';
+import path from 'path';
 
 // TODO: maybe move to config file
 const minTimeStamp = '2021';
@@ -7,10 +8,10 @@ const maxTimeStamp = '2024';
 // for details see https://day.js.org/docs/en/display/format
 const timeStampFormat = 'YYYYMMDDTHHmm';
 
-// NOTE: the mosaic store must be called exactly as its main directory
-// TODO: the name should be set dynamically in future
-const mosaicStoreName = 'demo-mosaic';
-const geoServerWorkspace = 'klips';
+const regionsMapping: any = {
+  0: 'dresden',
+  1: 'langenfeld'
+};
 
 /**
  * Convert incoming message from API to an internal job for RabbitMQ.
@@ -18,6 +19,16 @@ const geoServerWorkspace = 'klips';
  * @returns {Object} The job for the dispatcher
  */
 const createGeoTiffPublicationJob = (requestBody: any) => {
+
+  const regionCode: number = requestBody.payload.region;
+
+  const regionName: string = regionsMapping[regionCode];
+  if (!regionName) {
+    throw 'Provided region code is not known.';
+  }
+  const geoServerWorkspace = regionName;
+  // NOTE: the store name must be unique, even between multiple workspaces
+  const mosaicStoreName = `${regionName}_temperature`;
 
   const geotiffUrl = requestBody.payload.url;
 
@@ -27,14 +38,19 @@ const createGeoTiffPublicationJob = (requestBody: any) => {
   }
 
   const inCorrectTimeRange = parsedTimeStamp.isAfter(minTimeStamp) && parsedTimeStamp.isBefore(maxTimeStamp);
-  if (!inCorrectTimeRange){
+  if (!inCorrectTimeRange) {
     throw 'Time outside of timerange';
   }
 
   const timestamp = parsedTimeStamp.format(timeStampFormat);
 
   const filename = `${requestBody.payload.region}_${timestamp}`;
-  const geoTiffFilePath = `/opt/geoserver_data/${mosaicStoreName}/${filename}.tif`;
+
+  const geoserverDataDir: string = process.env.GEOSERVER_DATA_DIR as string;
+  if (!geoserverDataDir){
+    throw 'GeoServer data directory not provided';
+  }
+  const geoTiffFilePath = path.join(geoserverDataDir, 'temp', 'klips_geotiff_files', `${filename}.tif`);
 
   const email = requestBody.email;
 
@@ -72,6 +88,14 @@ const createGeoTiffPublicationJob = (requestBody: any) => {
       },
       {
         id: 3,
+        type: 'geoserver-create-imagemosaic-datastore',
+        inputs: [
+          geoServerWorkspace,
+          mosaicStoreName
+        ]
+      },
+      {
+        id: 4,
         type: 'geoserver-publish-imagemosaic',
         inputs: [
           geoServerWorkspace,
