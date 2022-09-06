@@ -45,7 +45,12 @@ const createGeoTiffPublicationJob = (requestBody: any) => {
   const timestamp = parsedTimeStamp.format(timeStampFormat);
 
   const filename = `${requestBody.payload.region}_${timestamp}`;
-  const geoTiffFilePath = path.join('/opt', 'geoserver_data', 'temp', 'klips_geotiff_files', `${filename}.tif`);
+
+  const geoserverDataDir: string = process.env.GEOSERVER_DATA_DIR as string;
+  if (!geoserverDataDir){
+    throw 'GeoServer data directory not provided';
+  }
+  const geoTiffFilePath = path.join(geoserverDataDir, 'temp', 'klips_geotiff_files', `${filename}.tif`);
 
   const email = requestBody.email;
 
