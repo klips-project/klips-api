@@ -8,7 +8,7 @@ import path from 'path';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
 
-const swaggerDocument = YAML.load('./swagger.yaml');
+const swaggerDocument = YAML.load('./src/config/swagger.yaml');
 
 import { logger } from './logger';
 import createJobFromApiInput from './converter';
@@ -18,7 +18,7 @@ import {
 } from 'body-parser';
 
 const port: any = process.env.PORT;
-if (!port || isNaN(port)){
+if (!port || isNaN(port)) {
   logger.error('No port provided');
   process.exit(1);
 }
@@ -86,7 +86,15 @@ const main = async () => {
       challenge: true
     }));
 
-    app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+    var options = {
+      // hide top toolbar
+      customCss: '.swagger-ui .topbar { display: none };'
+    };
+
+    app.use('/docs', swaggerUi.serve, swaggerUi.setup(
+      swaggerDocument,
+      options
+    ));
 
     app.listen(port);
 
