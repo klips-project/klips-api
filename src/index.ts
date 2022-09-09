@@ -5,6 +5,10 @@ import basicAuth from 'express-basic-auth';
 import Ajv from 'ajv';
 import fs from 'fs';
 import path from 'path';
+import swaggerUi from 'swagger-ui-express';
+import YAML from 'yamljs';
+
+const swaggerDocument = YAML.load('./swagger.yaml');
 
 import { logger } from './logger';
 import createJobFromApiInput from './converter';
@@ -78,8 +82,11 @@ const main = async () => {
 
     app.use(basicAuth({
       users: basicAuthUsers,
-      realm: 'KLIPS' // name of the area to enter
+      realm: 'KLIPS', // name of the area to enter
+      challenge: true
     }));
+
+    app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
     app.listen(port);
 
