@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  title: KLIPS Heat Island Results
+  title: KLIPS Heat Island Results API
   description: This API is part of the [KLIPS project](http://www.klips-projekt.de/) and accepts results about the urban heat islands simulation and prediction.
   version: 0.1.0
   host: klips-dev.terrestris.de
@@ -28,7 +28,7 @@ security:
 paths:
   /status:
     get:
-      summary: Information about the status of the API.
+      summary: Information about the status of the API
       security:
         - basicAuth: []
       responses:
