@@ -16,11 +16,12 @@ DISPATCHERQUEUE=dispatcher \
 RABBITHOST=localhost \
 RABBITUSER=rabbit \
 RABBITPASS=rabbit \
-USE_RABBIT_MQ=1 \
+USE_RABBIT_MQ=0 \
 CONFIG_DIR=src/config \
 PARTNER_URL_START=http://www.example.com \
 PARTNER_API_USERNAME=myusername \
 PARTNER_API_PASSWORD=randompassword \
+GEOSERVER_DATA_DIR=/opt/geoserver_data/ \
 npm run watch
 
 # create a local build
