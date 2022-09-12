@@ -28,10 +28,9 @@ const rabbitPass = process.env.RABBITPASS;
 const configDir = process.env.CONFIG_DIR || '/klips-conf';
 
 const basicAuthUsersPath = path.join(configDir, 'basic-auth-users.json');
-const jsonSchemaGeoTiffPath = path.join(configDir, 'schema-geotiff-upload.json');
-
 const basicAuthUsers = fs.readJSONSync(basicAuthUsersPath);;
 
+const jsonSchemaGeoTiffPath = path.join(configDir, 'schema-geotiff-upload.json');
 const schemaInput = fs.readJSONSync(jsonSchemaGeoTiffPath);
 
 const jobConfigPath = path.join(configDir, 'job-conf.json');

@@ -6,7 +6,7 @@ interface GeoTiffPublicationJobOptions {
   minTimeStamp: string;
   maxTimeStamp: string;
   timeStampFormat: string;
-  regionsMapping: { [key: string]: string };
+  regionsMapping: { [key: number]: string };
 }
 
 /**
@@ -28,7 +28,7 @@ const createGeoTiffPublicationJob = (requestBody: any,
   }: GeoTiffPublicationJobOptions
     = options;
 
-  const regionCode: string = requestBody.payload.region;
+  const regionCode: number = requestBody.payload.region;
 
   const regionName: string = regionsMapping[regionCode];
   if (!regionName) {
