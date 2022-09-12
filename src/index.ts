@@ -3,7 +3,7 @@ import helmet from 'helmet';
 import amqp from 'amqplib';
 import basicAuth from 'express-basic-auth';
 import Ajv from 'ajv';
-import fs from 'fs';
+import fs from 'fs-extra';
 import path from 'path';
 
 import { logger } from './logger';
@@ -30,11 +30,12 @@ const configDir = process.env.CONFIG_DIR || '/klips-conf';
 const basicAuthUsersPath = path.join(configDir, 'basic-auth-users.json');
 const jsonSchemaGeoTiffPath = path.join(configDir, 'schema-geotiff-upload.json');
 
-const rawdataUsers = fs.readFileSync(basicAuthUsersPath) as unknown as string;
-const basicAuthUsers = JSON.parse(rawdataUsers);
+const basicAuthUsers = fs.readJSONSync(basicAuthUsersPath);;
 
-const rawdataSchema = fs.readFileSync(jsonSchemaGeoTiffPath) as unknown as string;
-const schemaInput = JSON.parse(rawdataSchema);
+const schemaInput = fs.readJSONSync(jsonSchemaGeoTiffPath);
+
+const jobConfigPath = path.join(configDir, 'job-conf.json');
+const jobConfig = fs.readJSONSync(jobConfigPath);
 
 const main = async () => {
 
@@ -104,7 +105,7 @@ const main = async () => {
         // ensure a job can be created from the incoming JSON
         let job: any;
         try {
-          job = createJobFromApiInput(req.body);
+          job = createJobFromApiInput(req.body, jobConfig);
         } catch (error) {
           logger.error(error);
         }

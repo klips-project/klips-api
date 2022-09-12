@@ -2,25 +2,33 @@ import { logger } from './logger';
 import dayjs from 'dayjs';
 import path from 'path';
 
-// TODO: maybe move to config file
-const minTimeStamp = '2021';
-const maxTimeStamp = '2024';
-// for details see https://day.js.org/docs/en/display/format
-const timeStampFormat = 'YYYYMMDDTHHmm';
-
-const regionsMapping: any = {
-  0: 'dresden',
-  1: 'langenfeld'
-};
+interface GeoTiffPublicationJobOptions {
+  minTimeStamp: string;
+  maxTimeStamp: string;
+  timeStampFormat: string;
+  regionsMapping: { [key: string]: string };
+}
 
 /**
  * Convert incoming message from API to an internal job for RabbitMQ.
+ *
  * @param requestBody {Object} The JSON coming from the API
+ * @param options {GeoTiffPublicationJobOptions} An object with options for the job creations
+ *
  * @returns {Object} The job for the dispatcher
  */
-const createGeoTiffPublicationJob = (requestBody: any) => {
+const createGeoTiffPublicationJob = (requestBody: any,
+  options: GeoTiffPublicationJobOptions
+) => {
+  const {
+    minTimeStamp,
+    maxTimeStamp,
+    timeStampFormat,
+    regionsMapping
+  }: GeoTiffPublicationJobOptions
+    = options;
 
-  const regionCode: number = requestBody.payload.region;
+  const regionCode: string = requestBody.payload.region;
 
   const regionName: string = regionsMapping[regionCode];
   if (!regionName) {
@@ -47,7 +55,7 @@ const createGeoTiffPublicationJob = (requestBody: any) => {
   const filename = `${requestBody.payload.region}_${timestamp}`;
 
   const geoserverDataDir: string = process.env.GEOSERVER_DATA_DIR as string;
-  if (!geoserverDataDir){
+  if (!geoserverDataDir) {
     throw 'GeoServer data directory not provided';
   }
   const geoTiffFilePath = path.join(geoserverDataDir, 'temp', 'klips_geotiff_files', `${filename}.tif`);
@@ -115,12 +123,14 @@ const createGeoTiffPublicationJob = (requestBody: any) => {
  * Creates different jobs depending on the input message.
  *
  * @param requestBody {Object} The JSON coming from the API
+ * @param jobConfig {Object} The options for the jobs
+ *
  * @returns {Object} The job for the dispatcher
  */
-const createJobFromApiInput = (requestBody: any) => {
+const createJobFromApiInput = (requestBody: any, jobConfig: any) => {
+  const geoTiffPublicationJob = jobConfig.geoTiffPublicationJob;
 
-  return createGeoTiffPublicationJob(requestBody);
-
+  return createGeoTiffPublicationJob(requestBody, geoTiffPublicationJob);
 };
 
 export default createJobFromApiInput;
