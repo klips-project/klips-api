@@ -79,11 +79,6 @@ const main = async () => {
       extended: true
     }));
 
-    app.use(basicAuth({
-      users: basicAuthUsers,
-      realm: 'KLIPS', // name of the area to enter
-      challenge: true
-    }));
 
     var options = {
       // hide top toolbar
@@ -97,8 +92,17 @@ const main = async () => {
 
     app.listen(port);
 
+    const routeJob = '/job';
+    const routeStatus = '/status';
+
+    app.use([routeJob, routeStatus], basicAuth({
+      users: basicAuthUsers,
+      realm: 'KLIPS', // name of the area to enter
+      challenge: true
+    }));
+
     app.get(
-      '/status',
+      routeStatus,
       async (req: express.Request, res: express.Response): Promise<express.Response> => {
         logger.info('status active');
         return res.status(200).send({
@@ -107,7 +111,8 @@ const main = async () => {
       }
     );
 
-    app.post('/job',
+    app.post(
+      routeJob,
       async (req: express.Request, res: express.Response) => {
 
         const ajv = new Ajv();
