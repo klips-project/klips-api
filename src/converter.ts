@@ -21,10 +21,7 @@ const createGeoTiffPublicationJob = (requestBody: any,
   options: GeoTiffPublicationJobOptions
 ) => {
   const {
-    minTimeStamp,
-    maxTimeStamp,
-    timeStampFormat,
-    regionsMapping
+    minTimeStamp, maxTimeStamp, timeStampFormat, regionsMapping
   }: GeoTiffPublicationJobOptions
     = options;
 
