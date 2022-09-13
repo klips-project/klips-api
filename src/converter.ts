@@ -99,7 +99,11 @@ const createGeoTiffPublicationJob = (requestBody: any,
         type: 'geoserver-create-imagemosaic-datastore',
         inputs: [
           geoServerWorkspace,
-          mosaicStoreName
+          mosaicStoreName,
+          {
+            outputOfId: 2,
+            outputIndex: 0
+          }
         ]
       },
       {
