@@ -97,6 +97,19 @@ paths:
                 - source
                 - email
                 - payload
+              example:
+                category: forecast
+                email: info@example.de
+                payload:
+                  url: https://www.example.com/file.geotiff
+                  creationTime: 1663240000
+                  predictionEndTime: 1663240000
+                  predictionStartTime: 1663240000
+                  interval: 3600
+                  region: 0
+                  type: 0
+                source: hhi
+
       responses:
         200:
           description: OK
