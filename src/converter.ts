@@ -47,7 +47,7 @@ const createGeoTiffPublicationJob = (requestBody: any) => {
   const filename = `${requestBody.payload.region}_${timestamp}`;
 
   const geoserverDataDir: string = process.env.GEOSERVER_DATA_DIR as string;
-  if (!geoserverDataDir){
+  if (!geoserverDataDir) {
     throw 'GeoServer data directory not provided';
   }
   const geoTiffFilePath = path.join(geoserverDataDir, 'temp', 'klips_geotiff_files', `${filename}.tif`);
@@ -91,7 +91,11 @@ const createGeoTiffPublicationJob = (requestBody: any) => {
         type: 'geoserver-create-imagemosaic-datastore',
         inputs: [
           geoServerWorkspace,
-          mosaicStoreName
+          mosaicStoreName,
+          {
+            outputOfId: 2,
+            outputIndex: 0
+          }
         ]
       },
       {

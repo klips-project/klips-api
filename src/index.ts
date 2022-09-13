@@ -42,7 +42,6 @@ const schemaInput = JSON.parse(rawdataSchema);
 
 const main = async () => {
 
-  // TODO: ensure RabbitMQ is connected and stays connected
   try {
 
     let channel: any;
@@ -111,9 +110,6 @@ const main = async () => {
     app.post('/job',
       async (req: express.Request, res: express.Response) => {
 
-        // TODO: consider using "ajv-formats" to also check for types like "email"
-        // TODO: consider to also make sanity checks of the values
-        //       maybe using https://github.com/validatorjs/validator.js
         const ajv = new Ajv();
         const validate = ajv.compile(schemaInput);
         // ensure a job can be created from the incoming JSON
