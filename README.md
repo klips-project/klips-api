@@ -11,16 +11,6 @@ with local Node.js:
 npm i
 
 # define environment variables and run
-PORT=3000 \
-DISPATCHERQUEUE=dispatcher \
-RABBITHOST=localhost \
-RABBITUSER=rabbit \
-RABBITPASS=rabbit \
-USE_RABBIT_MQ=1 \
-CONFIG_DIR=src/config \
-PARTNER_URL_START=http://www.example.com \
-PARTNER_API_USERNAME=myusername \
-PARTNER_API_PASSWORD=randompassword \
 npm run watch
 
 # create a local build
@@ -40,7 +30,7 @@ docker run  \
   -p 3000:3000 \
   -v $(pwd):/usr/app \
   -v $(pwd)/src/config:/klips-conf \
-  --env-file dev.env \
+  --env-file docker.env \
   klips-api-dev
 
 ## build the production image

@@ -16,7 +16,7 @@
     "lint-fix": "eslint --fix --ext .ts .",
     "test": "npm run typecheck && npm run lint",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "watch": "nodemon -e ts,yaml src/index.ts"
+    "watch": "dotenv -e dev.env -- cross-var nodemon -e ts,yaml src/index.ts"
   },
   "dependencies": {
     "ajv": "^8.11.0",
@@ -37,6 +37,9 @@
     "@types/swagger-ui-express": "^4.1.3",
     "@types/yamljs": "^0.2.31",
     "@typescript-eslint/eslint-plugin": "^5.4.0",
+    "cross-var": "^1.1.0",
+    "dotenv": "^16.0.2",
+    "dotenv-cli": "^6.0.0",
     "eslint": "^8.2.0",
     "nodemon": "^2.0.15",
     "ts-node": "^10.4.0",
