@@ -8,8 +8,6 @@ import path from 'path';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
 
-const swaggerDocument = YAML.load('./src/config/swagger.yaml');
-
 import { logger } from './logger';
 import createJobFromApiInput from './converter';
 import {
@@ -30,6 +28,8 @@ const rabbitUser = process.env.RABBITUSER;
 const rabbitPass = process.env.RABBITPASS;
 
 const configDir = process.env.CONFIG_DIR || '/klips-conf';
+
+const swaggerDocument = YAML.load(path.join(configDir, 'swagger.yaml'));
 
 const basicAuthUsersPath = path.join(configDir, 'basic-auth-users.json');
 const basicAuthUsers = fs.readJSONSync(basicAuthUsersPath);;
