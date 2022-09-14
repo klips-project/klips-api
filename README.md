@@ -71,6 +71,7 @@ The API has two config files:
 
 - `basic-auth-users.json`: the credentials for basic authentication
 - `schema-geotiff-upload.json`: the JSON schema for validating the API input
+- `job-conf.json`: options for each job that shall be send to RabbitMQ
 
 ## Usage
 
