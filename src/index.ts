@@ -5,6 +5,10 @@ import basicAuth from 'express-basic-auth';
 import Ajv from 'ajv';
 import fs from 'fs-extra';
 import path from 'path';
+import swaggerUi from 'swagger-ui-express';
+import YAML from 'yamljs';
+
+const swaggerDocument = YAML.load('./src/config/swagger.yaml');
 
 import { logger } from './logger';
 import createJobFromApiInput from './converter';
@@ -14,7 +18,7 @@ import {
 } from 'body-parser';
 
 const port: any = process.env.PORT;
-if (!port || isNaN(port)){
+if (!port || isNaN(port)) {
   logger.error('No port provided');
   process.exit(1);
 }
@@ -75,15 +79,30 @@ const main = async () => {
       extended: true
     }));
 
-    app.use(basicAuth({
-      users: basicAuthUsers,
-      realm: 'KLIPS' // name of the area to enter
-    }));
+
+    var options = {
+      // hide top toolbar
+      customCss: '.swagger-ui .topbar { display: none };'
+    };
+
+    app.use('/docs', swaggerUi.serve, swaggerUi.setup(
+      swaggerDocument,
+      options
+    ));
 
     app.listen(port);
 
+    const routeJob = '/job';
+    const routeStatus = '/status';
+
+    app.use([routeJob, routeStatus], basicAuth({
+      users: basicAuthUsers,
+      realm: 'KLIPS', // name of the area to enter
+      challenge: true
+    }));
+
     app.get(
-      '/status',
+      routeStatus,
       async (req: express.Request, res: express.Response): Promise<express.Response> => {
         logger.info('status active');
         return res.status(200).send({
@@ -92,7 +111,8 @@ const main = async () => {
       }
     );
 
-    app.post('/job',
+    app.post(
+      routeJob,
       async (req: express.Request, res: express.Response) => {
 
         const ajv = new Ajv();

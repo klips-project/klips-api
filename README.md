@@ -10,7 +10,7 @@ with local Node.js:
 # install dependencies
 npm i
 
-# define environment variables and run
+# run with hot-reload
 npm run watch
 
 # create a local build

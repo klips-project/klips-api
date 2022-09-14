@@ -4,9 +4,9 @@
     "email": "info@example.de",
     "payload": {
         "url": "http://nginx/sample.tif",
-        "creationTime": 12345657687,
-        "predictionStartTime": 12345657687,
-        "predictionEndTime": 12345659687,
+        "creationTime": 1663240000,
+        "predictionStartTime": 1663240000,
+        "predictionEndTime": 1663240000,
         "interval": 3600,
         "region": 0 ,
         "type": 0
