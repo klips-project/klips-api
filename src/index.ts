@@ -85,15 +85,15 @@ const main = async () => {
       customCss: '.swagger-ui .topbar { display: none };'
     };
 
-    app.use('/docs', swaggerUi.serve, swaggerUi.setup(
+    app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(
       swaggerDocument,
       options
     ));
 
     app.listen(port);
 
-    const routeJob = '/job';
-    const routeStatus = '/status';
+    const routeJob = '/api/job';
+    const routeStatus = '/api/status';
 
     app.use([routeJob, routeStatus], basicAuth({
       users: basicAuthUsers,
