@@ -11,6 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: set -e
+      - name: Checkout repository
+        uses: actions/checkout@v2
       - name: Install and Lint
         uses: actions/setup-node@v2.1.5
         with:
