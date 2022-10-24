@@ -31,7 +31,7 @@ const createGeoTiffPublicationJob = (requestBody: any,
 
   const geotiffUrl = requestBody.payload.url;
 
-  const parsedTimeStamp = dayjs.unix(requestBody.payload.predictionStartTime);
+  const parsedTimeStamp = dayjs(requestBody.payload.predictionStartTime);
   if (!parsedTimeStamp.isValid()) {
     throw 'TimeStamp not valid';
   }
@@ -41,6 +41,7 @@ const createGeoTiffPublicationJob = (requestBody: any,
     throw 'Time outside of timerange';
   }
 
+  // TODO: use ISO8601 as format
   const timestamp = parsedTimeStamp.format(timeStampFormat);
 
   const filename = `${requestBody.payload.region}_${timestamp}`;
