@@ -16,7 +16,7 @@
     "lint-fix": "eslint --fix --ext .ts .",
     "test": "npm run typecheck && npm run lint",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "watch": "dotenv -e dev.env -- cross-var nodemon -e ts,yaml src/index.ts"
+    "watch": "dotenv -e dev.env -- cross-var nodemon -e ts,yaml,json --watch src src/index.ts"
   },
   "dependencies": {
     "@types/fs-extra": "^9.0.13",
