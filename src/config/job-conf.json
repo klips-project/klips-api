@@ -6,6 +6,9 @@
         "regions": [
             "dresden",
             "langenfeld"
+        ],
+        "types": [
+            "temperature"
         ]
     }
 }

@@ -15,9 +15,15 @@ const createGeoTiffPublicationJob = (requestBody: any,
   options: GeoTiffPublicationJobOptions
 ) => {
   const {
-    minTimeStamp, maxTimeStamp, timeStampFormat, regions
+    minTimeStamp, maxTimeStamp, timeStampFormat, regions, types
   }: GeoTiffPublicationJobOptions
     = options;
+
+  const type: string = requestBody.payload.type;
+
+  if (!type || !types.includes(type)) {
+    throw 'Provided type is not known.';
+  }
 
   const regionName: string = requestBody.payload.region;
 

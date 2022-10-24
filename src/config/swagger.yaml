@@ -81,7 +81,7 @@ paths:
                       type: string
                       description: The region name
                     type:
-                      type: integer
+                      type: string
                       description: The type of the result
                   required:
                       - url
@@ -104,7 +104,7 @@ paths:
                   predictionEndTime: "2022-10-09T12:32:33.004Z"
                   interval: 3600
                   region: "dresden"
-                  type: 0
+                  type: "temperature"
                 source: hhi
 
       responses:
