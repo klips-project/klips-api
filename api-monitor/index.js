@@ -14,7 +14,7 @@ const errorText = process.env.ALERT_TEXT_TEMPLATE;
  */
  async function sendMattermostAlert(text) {
 
-  const matterMostUrl = process.env.MATTERMOST_HOOK_URL
+  const matterMostUrl = process.env.MATTERMOST_HOOK_URL;
 
   const message = {
     text: text
