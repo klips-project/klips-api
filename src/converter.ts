@@ -1,7 +1,7 @@
 import { logger } from './logger';
 import dayjs from 'dayjs';
 import path from 'path';
-import { GeoTiffPublicationJobOptions } from './types';
+import { GeoTiffPublicationJobOptions, JobConfig } from './types';
 
 /**
  * Convert incoming message from API to an internal job for RabbitMQ.
@@ -9,21 +9,32 @@ import { GeoTiffPublicationJobOptions } from './types';
  * @param requestBody {Object} The JSON coming from the API
  * @param options {GeoTiffPublicationJobOptions} An object with options for the job creation
  *
- * @returns {Object} The job for the dispatcher
+ * @returns The job for the dispatcher
  */
 const createGeoTiffPublicationJob = (requestBody: any,
   options: GeoTiffPublicationJobOptions
 ) => {
   const {
-    minTimeStamp, maxTimeStamp, timeStampFormat, regionsMapping
+    minTimeStamp, maxTimeStamp, timeStampFormat, regions, types, scenarios
   }: GeoTiffPublicationJobOptions
     = options;
 
-  const regionCode: number = requestBody.payload.region;
+  const type: string = requestBody.payload.type;
 
-  const regionName: string = regionsMapping[regionCode];
-  if (!regionName) {
-    throw 'Provided region code is not known.';
+  if (!type || !types.includes(type)) {
+    throw 'Provided type is not known.';
+  }
+
+  const scenario: string = requestBody.payload.scenario;
+
+  if (!scenario || !scenarios.includes(scenario)) {
+    throw 'Provided scenario is not known.';
+  }
+
+  const regionName: string = requestBody.payload.region;
+
+  if (!regionName || !regions.includes(regionName)) {
+    throw 'Provided region is not known.';
   }
   const geoServerWorkspace = regionName;
   // NOTE: the store name must be unique, even between multiple workspaces
@@ -31,7 +42,7 @@ const createGeoTiffPublicationJob = (requestBody: any,
 
   const geotiffUrl = requestBody.payload.url;
 
-  const parsedTimeStamp = dayjs.unix(requestBody.payload.predictionStartTime);
+  const parsedTimeStamp = dayjs(requestBody.payload.predictionStartTime);
   if (!parsedTimeStamp.isValid()) {
     throw 'TimeStamp not valid';
   }
@@ -41,6 +52,7 @@ const createGeoTiffPublicationJob = (requestBody: any,
     throw 'Time outside of timerange';
   }
 
+  // TODO: use ISO8601 as format or other standard that uses timezone
   const timestamp = parsedTimeStamp.format(timeStampFormat);
 
   const filename = `${requestBody.payload.region}_${timestamp}`;
@@ -120,9 +132,9 @@ const createGeoTiffPublicationJob = (requestBody: any,
  * @param requestBody {Object} The JSON coming from the API
  * @param jobConfig {Object} The options for the jobs
  *
- * @returns {Object} The job for the dispatcher
+ * @returns The job for the dispatcher
  */
-const createJobFromApiInput = (requestBody: any, jobConfig: any) => {
+const createJobFromApiInput = (requestBody: any, jobConfig: JobConfig) => {
   const geoTiffPublicationJob = jobConfig.geoTiffPublicationJob;
 
   return createGeoTiffPublicationJob(requestBody, geoTiffPublicationJob);
