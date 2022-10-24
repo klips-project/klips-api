@@ -2,7 +2,6 @@
     "$id": "json",
     "type": "object",
     "properties": {
-      "category": { "type": "string" },
       "source": { "type": "string" },
       "email": { "type": "string" },
       "payload": {
@@ -42,7 +41,6 @@
       }
     },
     "required": [
-      "category",
       "source",
       "email",
       "payload"

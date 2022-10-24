@@ -52,9 +52,6 @@ paths:
               title: Information about the new result
               type: object
               properties:
-                category:
-                  type: string
-                  description: The category of the result
                 source:
                   type: string
                   description: The name of the submitting institution
@@ -95,12 +92,10 @@ paths:
                       - region
                       - type
               required:
-                - category
                 - source
                 - email
                 - payload
               example:
-                category: forecast
                 email: info@example.de
                 payload:
                   url: https://www.example.com/file.geotiff
