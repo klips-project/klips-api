@@ -18,6 +18,7 @@ npm run build
 ```
 
 using Node.js inside Docker:
+
 ```shell
 # build image
 docker build \
@@ -75,7 +76,8 @@ The API has two config files:
 
 ## Usage
 
-API starts on port 3000 with these endpoints:
+API starts on port 3000 with these endpoints:A
+
 - `GET /status`
 - `POST /job`
 
