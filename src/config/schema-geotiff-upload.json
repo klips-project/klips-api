@@ -27,7 +27,7 @@
           "type": "integer"
         },
         "region": {
-          "type": "integer"
+          "type": "string"
         },
         "type": {
           "type": "integer"

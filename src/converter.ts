@@ -15,15 +15,14 @@ const createGeoTiffPublicationJob = (requestBody: any,
   options: GeoTiffPublicationJobOptions
 ) => {
   const {
-    minTimeStamp, maxTimeStamp, timeStampFormat, regionsMapping
+    minTimeStamp, maxTimeStamp, timeStampFormat, regions
   }: GeoTiffPublicationJobOptions
     = options;
 
-  const regionCode: number = requestBody.payload.region;
+  const regionName: string = requestBody.payload.region;
 
-  const regionName: string = regionsMapping[regionCode];
   if (!regionName) {
-    throw 'Provided region code is not known.';
+    throw 'Provided region is not known.';
   }
   const geoServerWorkspace = regionName;
   // NOTE: the store name must be unique, even between multiple workspaces

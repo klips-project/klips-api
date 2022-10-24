@@ -3,9 +3,9 @@
         "minTimeStamp": "2021",
         "maxTimeStamp": "2024",
         "timeStampFormat": "YYYYMMDDTHHmm",
-        "regionsMapping": {
-            "0": "dresden",
-            "1": "langenfeld"
-          }
+        "regions": [
+            "dresden",
+            "langenfeld"
+        ]
     }
 }

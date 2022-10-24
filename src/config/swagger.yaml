@@ -78,8 +78,8 @@ paths:
                       type: integer
                       description: The interval in seconds
                     region:
-                      type: integer
-                      description: The region code
+                      type: string
+                      description: The region name
                     type:
                       type: integer
                       description: The type of the result
@@ -103,7 +103,7 @@ paths:
                   predictionStartTime: "2022-10-08T12:32:33.004Z"
                   predictionEndTime: "2022-10-09T12:32:33.004Z"
                   interval: 3600
-                  region: 0
+                  region: "dresden"
                   type: 0
                 source: hhi
 
