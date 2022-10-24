@@ -14,6 +14,7 @@ import {
   urlencoded,
   json
 } from 'body-parser';
+import { JobConfig } from './types';
 
 const port: any = process.env.PORT;
 if (!port || isNaN(port)) {
@@ -38,7 +39,7 @@ const jsonSchemaGeoTiffPath = path.join(configDir, 'schema-geotiff-upload.json')
 const schemaInput = fs.readJSONSync(jsonSchemaGeoTiffPath);
 
 const jobConfigPath = path.join(configDir, 'job-conf.json');
-const jobConfig = fs.readJSONSync(jobConfigPath);
+const jobConfig = fs.readJSONSync(jobConfigPath) as JobConfig;
 
 const main = async () => {
 
