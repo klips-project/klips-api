@@ -1,0 +1,20 @@
+name: Lint files
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - run: set -e
+      - name: Install and Lint
+        uses: actions/setup-node@v2.1.5
+        with:
+          node-version: '16'
+      - run: npm ci
+      - run: npm run lint
+      
