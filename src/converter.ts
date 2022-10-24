@@ -7,7 +7,7 @@ import { GeoTiffPublicationJobOptions } from './types';
  * Convert incoming message from API to an internal job for RabbitMQ.
  *
  * @param requestBody {Object} The JSON coming from the API
- * @param options {GeoTiffPublicationJobOptions} An object with options for the job creations
+ * @param options {GeoTiffPublicationJobOptions} An object with options for the job creation
  *
  * @returns {Object} The job for the dispatcher
  */
