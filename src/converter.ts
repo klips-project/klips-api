@@ -21,7 +21,7 @@ const createGeoTiffPublicationJob = (requestBody: any,
 
   const regionName: string = requestBody.payload.region;
 
-  if (!regionName) {
+  if (!regionName || !regions.includes(regionName)) {
     throw 'Provided region is not known.';
   }
   const geoServerWorkspace = regionName;
