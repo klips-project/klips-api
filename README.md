@@ -76,7 +76,7 @@ The API has two config files:
 
 ## Usage
 
-API starts on port 3000 with these endpoints:A
+API starts on port 3000 with these endpoints:
 
 - `GET /status`
 - `POST /job`
@@ -89,5 +89,9 @@ curl \
 --header 'Authorization: Basic a2xpcHM6a2xpcHM=' \
 --header 'Content-Type: application/json' \
 --data @example_requests/send-geotiff.json \
-'http://localhost:3000/job'
+'http://localhost:3000/api/job'
 ```
+
+## Monitoring Script
+
+The script in `api-monitor` can be used to regularly check if the API is running.
