@@ -83,6 +83,9 @@ paths:
                     type:
                       type: string
                       description: The type of the result
+                    scenario:
+                      type: string
+                      description: The scenario of the result
                   required:
                       - url
                       - creationTime
@@ -91,6 +94,7 @@ paths:
                       - interval
                       - region
                       - type
+                      - scenario
               required:
                 - source
                 - email

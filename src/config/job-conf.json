@@ -9,6 +9,9 @@
         ],
         "types": [
             "temperature"
+        ],
+        "scenarios": [
+            "forecast"
         ]
     }
 }

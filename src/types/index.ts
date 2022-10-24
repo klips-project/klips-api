@@ -4,4 +4,5 @@ export interface GeoTiffPublicationJobOptions {
   timeStampFormat: string;
   regions: string[];
   types: string[];
+  scenarios: string[];
 }
