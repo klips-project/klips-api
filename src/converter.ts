@@ -1,13 +1,7 @@
 import { logger } from './logger';
 import dayjs from 'dayjs';
 import path from 'path';
-
-interface GeoTiffPublicationJobOptions {
-  minTimeStamp: string;
-  maxTimeStamp: string;
-  timeStampFormat: string;
-  regionsMapping: { [key: number]: string };
-}
+import { GeoTiffPublicationJobOptions } from './types';
 
 /**
  * Convert incoming message from API to an internal job for RabbitMQ.
