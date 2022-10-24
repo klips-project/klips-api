@@ -12,7 +12,7 @@
   "scripts": {
     "build": "npm run clean && tsc -p tsconfig.json",
     "clean": "rimraf ./dist",
-    "lint": "eslint --ext .ts .",
+    "lint": "eslint --ext .ts . && tsc --build",
     "lint-fix": "eslint --fix --ext .ts .",
     "test": "npm run typecheck && npm run lint",
     "typecheck": "tsc -p tsconfig.json --noEmit",
