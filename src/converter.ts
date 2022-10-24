@@ -52,7 +52,7 @@ const createGeoTiffPublicationJob = (requestBody: any,
     throw 'Time outside of timerange';
   }
 
-  // TODO: use ISO8601 as format
+  // TODO: use ISO8601 as format or other standard that uses timezone
   const timestamp = parsedTimeStamp.format(timeStampFormat);
 
   const filename = `${requestBody.payload.region}_${timestamp}`;
