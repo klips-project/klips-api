@@ -1,6 +1,6 @@
 import { logger } from './logger';
 import dayjs from 'dayjs';
-import utc from "dayjs/plugin/utc";
+import utc from 'dayjs/plugin/utc';
 import path from 'path';
 import { GeoTiffPublicationJobOptions, JobConfig } from './types';
 
