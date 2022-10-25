@@ -128,6 +128,7 @@ const main = async () => {
 
         if (validate(req.body) && job) {
           logger.info('Input data is in correct structure');
+          logger.info(`Job:\n ${JSON.stringify(job, null, 2)}`);
 
           if (useRabbitMQ) {
             if (job) {

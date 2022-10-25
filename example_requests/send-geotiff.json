@@ -4,11 +4,12 @@
     "email": "info@example.de",
     "payload": {
         "url": "http://nginx/sample.tif",
-        "creationTime": 1663240000,
-        "predictionStartTime": 1663240000,
-        "predictionEndTime": 1663240000,
+        "creationTime": "2022-10-07T12:32:33.004Z",
+        "predictionStartTime": "2022-10-08T12:32:33.004Z",
+        "predictionEndTime": "2022-10-09T12:32:33.004Z",
         "interval": 3600,
-        "region": 0 ,
-        "type": 0
+        "region": "dresden",
+        "type": "temperature",
+        "scenario": "forecast"
     }
 }

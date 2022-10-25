@@ -1,7 +1,11 @@
 import { logger } from './logger';
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
 import path from 'path';
 import { GeoTiffPublicationJobOptions, JobConfig } from './types';
+
+// we set Day.js to UTC mode, see https://day.js.org/docs/en/parse/utc
+dayjs.extend(utc);
 
 /**
  * Convert incoming message from API to an internal job for RabbitMQ.
@@ -52,10 +56,8 @@ const createGeoTiffPublicationJob = (requestBody: any,
     throw 'Time outside of timerange';
   }
 
-  // TODO: use ISO8601 as format or other standard that uses timezone
-  const timestamp = parsedTimeStamp.format(timeStampFormat);
-
-  const filename = `${requestBody.payload.region}_${timestamp}`;
+  const formattedTimestamp = parsedTimeStamp.utc().format(timeStampFormat);
+  const filename = `${requestBody.payload.region}_${formattedTimestamp}`;
 
   const geoserverDataDir: string = process.env.GEOSERVER_DATA_DIR as string;
   if (!geoserverDataDir) {
