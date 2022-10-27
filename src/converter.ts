@@ -19,9 +19,11 @@ const createGeoTiffPublicationJob = (requestBody: any,
   options: GeoTiffPublicationJobOptions
 ) => {
   const {
-    minTimeStamp, maxTimeStamp, timeStampFormat, regions, types, scenarios
+    minTimeStamp, maxTimeStamp, timeStampFormat, allowedEPSGCodes,
+    allowedDataTypes, fileSize, regions, types, scenarios
   }: GeoTiffPublicationJobOptions
     = options;
+  const regionNames = Object.keys(regions);
 
   const type: string = requestBody.payload.type;
 
@@ -37,7 +39,7 @@ const createGeoTiffPublicationJob = (requestBody: any,
 
   const regionName: string = requestBody.payload.region;
 
-  if (!regionName || !regions.includes(regionName)) {
+  if (!regionName || !regionNames.includes(regionName)) {
     throw 'Provided region is not known.';
   }
   const geoServerWorkspace = regionName;
@@ -96,6 +98,19 @@ const createGeoTiffPublicationJob = (requestBody: any,
           {
             outputOfId: 1,
             outputIndex: 0
+          },
+          {
+            "extent": {
+              //@ts-ignore
+              "allowedExtent": regions[regionName].bbox
+            },
+            "projection": {
+              "allowedEPSGCodes": allowedEPSGCodes
+            },
+            "dataType": {
+              "allowedDataTypes": allowedDataTypes
+            },
+            "fileSize": fileSize
           }
         ]
       },
