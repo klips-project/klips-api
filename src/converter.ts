@@ -100,17 +100,17 @@ const createGeoTiffPublicationJob = (requestBody: any,
             outputIndex: 0
           },
           {
-            "extent": {
+            extent: {
               //@ts-ignore
-              "allowedExtent": regions[regionName].bbox
+              allowedExtent: regions[regionName].bbox
             },
-            "projection": {
-              "allowedEPSGCodes": allowedEPSGCodes
+            projection: {
+              allowedEPSGCodes: allowedEPSGCodes
             },
-            "dataType": {
-              "allowedDataTypes": allowedDataTypes
+            dataType: {
+              allowedDataTypes: allowedDataTypes
             },
-            "fileSize": fileSize
+            fileSize: fileSize
           }
         ]
       },

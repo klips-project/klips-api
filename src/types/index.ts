@@ -2,10 +2,17 @@ export interface GeoTiffPublicationJobOptions {
   minTimeStamp: string;
   maxTimeStamp: string;
   timeStampFormat: string;
-  allowedDataTypes: string[],
-  allowedEPSGCodes: number[]
-  fileSize: Object,
-  regions: Object;
+  allowedDataTypes: string[];
+  allowedEPSGCodes: number[];
+  fileSize: {
+    minFileSize: number;
+    maxFileSize: number;
+  };
+  regions: {
+    [key: string]: {
+      bbox: string;
+    };
+  };
   types: string[];
   scenarios: string[];
 }
