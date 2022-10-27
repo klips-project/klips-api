@@ -101,7 +101,6 @@ const createGeoTiffPublicationJob = (requestBody: any,
           },
           {
             extent: {
-              //@ts-ignore
               allowedExtent: regions[regionName].bbox
             },
             projection: {
