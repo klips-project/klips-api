@@ -1,4 +1,4 @@
-FROM node:16.15.0-slim
+FROM node:16-bullseye-slim
 
 WORKDIR /usr/build
 
@@ -7,7 +7,7 @@ COPY ./ ./
 RUN npm install
 RUN npm run build
 
-FROM node:16.15.0-slim
+FROM node:16-bullseye-slim
 
 WORKDIR /usr/app
 
