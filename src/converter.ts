@@ -77,6 +77,8 @@ const createGeoTiffPublicationJob = (requestBody: any,
 
   const email = requestBody.email;
 
+  const replaceExistingGranule = true;
+
   // set username and password if necessary
   let username;
   let password;
@@ -147,7 +149,8 @@ const createGeoTiffPublicationJob = (requestBody: any,
         inputs: [
           geoServerWorkspace,
           mosaicStoreName,
-          fileUrlOnWebspace
+          fileUrlOnWebspace,
+          replaceExistingGranule
         ]
       }
     ],
