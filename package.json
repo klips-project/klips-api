@@ -6,7 +6,7 @@
     "type": "git",
     "url": "git+https://github.com/klips-project/klips-api.git"
   },
-  "license": "MIT",
+  "license": "BSD 2-Clause",
   "author": "terrestris GmbH & Co. KG <info@terrestris.de>, meggsimum <info@meggsimum.de>",
   "main": "./src/index.js",
   "scripts": {
