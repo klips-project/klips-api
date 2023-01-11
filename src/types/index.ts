@@ -4,6 +4,7 @@ export interface GeoTiffPublicationJobOptions {
   timeStampFormat: string;
   allowedDataTypes: string[];
   allowedEPSGCodes: number[];
+  expectedBandCount: number;
   fileSize: {
     minFileSize: number;
     maxFileSize: number;
