@@ -59,15 +59,25 @@ const createGeoTiffPublicationJob = (requestBody: any,
   }
 
   const formattedTimestamp = parsedTimeStamp.utc().format(timeStampFormat);
-  const filename = `${requestBody.payload.region}_${formattedTimestamp}`;
+  const fileName = `${requestBody.payload.region}_${formattedTimestamp}`;
+  const fileNameWithSuffix = `${fileName}.tif`;
 
-  const geoserverDataDir: string = process.env.GEOSERVER_DATA_DIR as string;
-  if (!geoserverDataDir) {
-    throw 'GeoServer data directory not provided';
-  }
-  const geoTiffFilePath = path.join(geoserverDataDir, 'temp', 'klips_geotiff_files', `${filename}.tif`);
+  const stagingDirectory = '/opt/staging/';
+  const cogWebspaceBasePath = '/opt/cog/';
+  const geoTiffFilePath = path.join(stagingDirectory, fileNameWithSuffix);
+
+  const filePathOnWebspace = path.join(
+    cogWebspaceBasePath,
+    geoServerWorkspace,
+    mosaicStoreName,
+    fileNameWithSuffix
+  );
+
+  const fileUrlOnWebspace = `http://nginx/cog/${geoServerWorkspace}/${mosaicStoreName}/${fileNameWithSuffix}`;
 
   const email = requestBody.email;
+
+  const replaceExistingGranule = true;
 
   // set username and password if necessary
   let username;
@@ -118,26 +128,32 @@ const createGeoTiffPublicationJob = (requestBody: any,
       },
       {
         id: 3,
-        type: 'geoserver-create-imagemosaic-datastore',
+        type: 'geotiff-optimizer',
         inputs: [
-          geoServerWorkspace,
-          mosaicStoreName,
           {
             outputOfId: 2,
             outputIndex: 0
-          }
+          },
+          filePathOnWebspace
         ]
       },
       {
         id: 4,
+        type: 'geoserver-create-imagemosaic-datastore',
+        inputs: [
+          geoServerWorkspace,
+          mosaicStoreName,
+          fileUrlOnWebspace
+        ]
+      },
+      {
+        id: 5,
         type: 'geoserver-publish-imagemosaic',
         inputs: [
           geoServerWorkspace,
           mosaicStoreName,
-          {
-            outputOfId: 2,
-            outputIndex: 0
-          }
+          fileUrlOnWebspace,
+          replaceExistingGranule
         ]
       }
     ],
